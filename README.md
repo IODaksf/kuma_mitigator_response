@@ -25,7 +25,11 @@
 ```bash
 ./mitigator_response.py -s 1.1.1.1 -t 300 -d 2.2.2.2 -p 80 -o 80 -P TCP --server 172.16.1.20 --user admin --password admin --policy 10
 ```
+Для блокировки источника в общих политиках защиты параметр policy - **all** 
 
+```bash
+--policy all 
+```
 <h1>Аргументы запуска скрипта в KUMA</h1>
 
 ```python
