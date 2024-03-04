@@ -56,7 +56,7 @@ def make_request(hostname, uri, method=None, token=None, policy=None, data=None,
 
     if parameters is not None:
         url = f'https://{hostname}/api/v4/{uri}?{parameters}'
-
+    
     request = RequestEx(url, method=method)
     if token is not None:
         request.add_header('X-Auth-Token', token)
@@ -80,7 +80,7 @@ def make_request(hostname, uri, method=None, token=None, policy=None, data=None,
 def block_traffic(hostname, token, options, policy_id):
 #Вносим во временную блокировку ip адрес
     if policy_id:
-        tbl_install = make_request(hostname, 
+        make_request(hostname, 
                                 f'tbl/items?policy={policy_id}&no_logs=false&source=1', 
                                 token=token, 
                                 method='POST', 
@@ -92,7 +92,7 @@ def block_traffic(hostname, token, options, policy_id):
                                             }
                                         ]
                                     } )
-        tbl_install_check = make_request(hostname, f'tbl/list?policy={policy_id}', token=token, method='GET')
+        
 
 
 def search_policy(hostname, token, options):
@@ -126,20 +126,23 @@ if __name__ == '__main__':
     if options.user is not None:
         user = options.user
     else:
-        user = 'user' # Заменить логин
+        user = 'USERNAME' # Заменить логин
     if options.password is not None:
         passwd = options.password
     else:
-        passwd = 'passwd' # Заменить пароль
+        passwd = 'PASSWORD' # Заменить пароль
     
     for host in hostnames:
         url_prefix = f"https://{host}/api/v4"
         try:
             data = make_request(host, 'users/session', data={'username': user, 'password': passwd})
             token = data['token']
+            print(token)
             if options.policy is None:
                 policy_id = search_policy(host, token, options)
                 block_traffic(host, token, options, policy_id)
+            elif options.policy == 'all':
+                block_traffic(host, token, options, '0')
             else:
                 block_traffic(host, token, options, options.policy)
         except:
